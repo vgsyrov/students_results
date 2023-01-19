@@ -1,0 +1,162 @@
+version: "3"
+
+#volumes:
+#  maven-repo:
+#    /home/oper/notes/new_work/cust_trial/maven_repo/
+
+services:
+    results-control-api-gateway-svc:
+        container_name: results-control-api-gateway_docker
+        restart: on-failure
+        build:
+            context: results-control-api-gateway
+            dockerfile: ../Dockerfile.fast
+
+        image: results-control-api-gateway_docker:latest
+        networks:
+            - network
+        ports:
+            - "8080:8080"
+        depends_on:
+            - rabbitMQ
+            - personal-information-svc
+            - academic-performance-svc
+            - period-planning-svc
+            - schedule-calendar-svc
+
+    personal-information-svc:
+        container_name: personal-information_docker
+        restart: on-failure
+        build:
+            context: personal-information
+            dockerfile: ../Dockerfile.fast
+
+        image: personal-information_docker:latest
+        networks:
+            - network
+        ports:
+            - "8083:8080"
+        depends_on:
+            - db_pi
+        links:
+            - db_pi
+
+    academic-performance-svc:
+        container_name: academic-performance_docker
+        restart: on-failure
+        build:
+            context: academic-performance
+            dockerfile: ../Dockerfile.fast
+
+        image: academic-performance_docker:latest
+        networks:
+            - network
+        ports:
+            - "8084:8080"
+        depends_on:
+            - db_ap
+#            - rabbitMQ
+        links:
+            - db_ap
+#            - rabbitMQ
+
+    period-planning-svc:
+        container_name: period-planning_docker
+        restart: on-failure
+        build:
+            context: period-planning
+            dockerfile: ../Dockerfile.fast
+
+        image: period-planning_docker:latest
+        networks:
+            - network
+        ports:
+            - "8085:8080"
+        depends_on:
+            - db_pp
+        links:
+            - db_pp
+
+    schedule-calendar-svc:
+        container_name: schedule-calendar_docker
+        restart: on-failure
+        build:
+            context: schedule-calendar
+            dockerfile: ../Dockerfile.fast
+
+        image: schedule-calendar_docker:latest
+        networks:
+            - network
+        ports:
+            - "8086:8080"
+        depends_on:
+            - db_sc
+#            - rabbitMQ
+        links:
+            - db_sc
+#            - rabbitMQ
+
+
+    rabbitMQ:
+        image: rabbitmq:latest
+        restart: on-failure
+        container_name: rabbitmq
+        ports:
+         - "5672:5672"
+         - "15672:15672"
+
+        networks:
+           - network
+
+#create DB for all services: academic-performance (ap), period-planning(pp), schedule-calendar(sc), personal-information(pi)
+    db_ap:
+        image: "postgres"
+        restart: on-failure
+        container_name: db_ap
+        env_file:
+           - database.env # configure postgres
+        volumes:
+          - ./pg_db/init.sql:/docker-entrypoint-initdb.d/init.sql
+        networks:
+            - network
+
+
+    db_pp:
+        image: "postgres"
+        restart: on-failure
+        container_name: db_pp
+        env_file:
+           - database.env # configure postgres
+        volumes:
+          - ./pg_db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+        networks:
+            - network
+
+
+    db_sc:
+        image: "postgres"
+        restart: on-failure
+        container_name: db_sc
+        env_file:
+           - database.env # configure postgres
+        volumes:
+          - ./pg_db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+        networks:
+            - network
+
+    db_pi:
+        image: "postgres"
+        restart: on-failure
+        container_name: db_pi
+        env_file:
+           - database.env # configure postgres
+        volumes:
+          - ./pg_db/init.sql:/docker-entrypoint-initdb.d/init.sql
+        networks:
+            - network
+
+
+networks:
+  network: {}

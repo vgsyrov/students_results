@@ -1,0 +1,30 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet author="oper (generated)" id="1615632643278-1">
+        <createTable tableName="person">
+            <column name="personid" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fullname" type="TEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="oper (generated)" id="1615632643278-2">
+        <insert tableName="person">
+            <column name="personid" value="initialPersonData_1"/>
+            <column name="fullname" value="Крузенштерн Иван Фёдорович"/>
+        </insert>
+        <insert tableName="person">
+            <column name="personid" value="initialPersonData_2"/>
+            <column name="fullname" value="Толстой Лев Николаевич"/>
+        </insert>
+        <insert tableName="person">
+            <column name="personid" value="initialPersonData_3"/>
+            <column name="fullname" value="Кныш Иван Иванович"/>
+        </insert>
+    </changeSet>
+    <changeSet author="oper (generated)" id="1615632643278-3">
+        <createIndex indexName="person_unq_personid" tableName="person" unique="true">
+            <column name="personid"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
